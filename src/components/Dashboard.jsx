@@ -16,14 +16,13 @@ const AVATARES = [
 ];
 
 export default function Dashboard({ onLogout }) {
-  // Obtener la información del usuario en sesión
+  // Obtener la información del usuario en sesión o asignar valores anónimos por defecto
   const usuarioSesion = JSON.parse(localStorage.getItem('sesion_activa')) || {
     nombre: 'Usuario',
     email: 'anonimo@correo.com',
     foto: fotoPorDefecto
   };
 
-  // Clave dinámica única para guardar los contactos de este usuario en específico
   const STORAGE_KEY_CONTACTOS = `contactos_v2_${usuarioSesion.email}`;
 
   // Cargar contactos iniciales desde localStorage específicos del usuario
@@ -39,30 +38,22 @@ export default function Dashboard({ onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [vistaActiva, setVistaActiva] = useState('ver'); 
   const [temaGlobal, setTemaGlobal] = useState('tema-light');
-  
-  // La foto de perfil se inicializa con la del usuario registrado
   const [fotoUsuario, setFotoUsuario] = useState(usuarioSesion.foto || fotoPorDefecto);
   const [vistaCartas, setVistaCartas] = useState('1');
 
-  // Guardar en localStorage de forma automática cada vez que la lista cambie
+  // Guardar automáticamente los contactos en localStorage al mutar la lista
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_CONTACTOS, JSON.stringify(listaContactos));
   }, [listaContactos, STORAGE_KEY_CONTACTOS]);
 
-  // Sincronizar el cambio de foto de perfil del usuario en la base de datos de usuarios
+  // Sincronizar el cambio de foto de perfil en la lista global de usuarios y sesión activa
   useEffect(() => {
     const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
-    const usuariosActualizados = usuarios.map(u => {
-      if (u.email === usuarioSesion.email) {
-        return { ...u, foto: fotoUsuario };
-      }
-      return u;
-    });
+    const usuariosActualizados = usuarios.map(u => 
+      u.email === usuarioSesion.email ? { ...u, foto: fotoUsuario } : u
+    );
     localStorage.setItem('usuarios', JSON.stringify(usuariosActualizados));
-    
-    // Actualizar tla sesión activa actual
-    const sesionActualizada = { ...usuarioSesion, foto: fotoUsuario };
-    localStorage.setItem('sesion_activa', JSON.stringify(sesionActualizada));
+    localStorage.setItem('sesion_activa', JSON.stringify({ ...usuarioSesion, foto: fotoUsuario }));
   }, [fotoUsuario]);
 
   const addContacto = (nuevo) => {
@@ -72,7 +63,7 @@ export default function Dashboard({ onLogout }) {
 
   const deleteContacto = (id) => {
     setListaContactos(listaContactos.filter(c => c.id !== id));
-    if (contactoEditar && contactoEditar.id === id) setContactoEditar(null);
+    if (contactoEditar?.id === id) setContactoEditar(null);
   };
 
   const enviarAEdicion = (contacto) => {
@@ -81,7 +72,7 @@ export default function Dashboard({ onLogout }) {
   };
 
   const handleCerrarSesion = () => {
-    localStorage.removeItem('sesion_activa'); // Eliminar rastro de la sesión
+    localStorage.removeItem('sesion_activa');
     onLogout();
   };
 
@@ -91,7 +82,7 @@ export default function Dashboard({ onLogout }) {
       c.nombre.toLowerCase().includes(termino) ||
       c.apellido.toLowerCase().includes(termino) ||
       c.numero.toLowerCase().includes(termino) ||
-      (c.notas && c.notas.toLowerCase().includes(termino))
+      c.notas?.toLowerCase().includes(termino)
     );
   });
 
@@ -100,7 +91,6 @@ export default function Dashboard({ onLogout }) {
       
       <Navbar 
         onSearch={setTerminoBusqueda} 
-        totalContactos={listaContactos.length} 
         onOpenSidebar={() => setSidebarOpen(!sidebarOpen)} 
         userFoto={fotoUsuario}
         vistaCartas={vistaCartas}
@@ -115,39 +105,34 @@ export default function Dashboard({ onLogout }) {
               className={`sidebar-tab ${vistaActiva === 'ver' ? 'tab-active' : ''}`}
               onClick={() => setVistaActiva('ver')}
             >
-              <span className="tab-icon">👤</span>
-              <span className="tab-text">Contactos ({listaContactos.length})</span>
+              👤 <span className="tab-text">Contactos ({listaContactos.length})</span>
             </button>
 
             <button 
               className={`sidebar-tab ${vistaActiva === 'crear' ? 'tab-active' : ''}`}
               onClick={() => { setVistaActiva('crear'); setContactoEditar(null); }}
             >
-              <span className="tab-icon"> </span>
-              <span className="tab-text">Crear contacto</span>
+               <span className="tab-text">Crear contacto</span>
             </button>
 
             <button 
               className={`sidebar-tab ${vistaActiva === 'perfil' ? 'tab-active' : ''}`}
               onClick={() => setVistaActiva('perfil')}
             >
-              <span className="tab-icon"></span>
-              <span className="tab-text">Mi Perfil</span>
+               <span className="tab-text">Mi Perfil</span>
             </button>
 
             <button 
               className={`sidebar-tab ${vistaActiva === 'temas' ? 'tab-active' : ''}`}
               onClick={() => setVistaActiva('temas')}
             >
-              <span className="tab-icon"></span>
-              <span className="tab-text">Cambiar Tema</span>
+               <span className="tab-text">Cambiar Tema</span>
             </button>
           </div>
 
           <div className="sidebar-footer">
             <button className="sidebar-tab btn-logout-tab" onClick={handleCerrarSesion}>
-              <span className="tab-icon"></span>
-              <span className="tab-text">Cerrar Sesión</span>
+               <span className="tab-text">Cerrar Sesión</span>
             </button>
           </div>
         </aside>
@@ -193,15 +178,15 @@ export default function Dashboard({ onLogout }) {
             <div className="google-center-form-box material-profile-panel">
               <h2>Perfil de Usuario</h2>
               <div className="profile-card-body">
-                <img src={fotoUsuario} alt="User" style={{width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover'}}/>
+                <img src={fotoUsuario} alt="User" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />
                 <h3>{usuarioSesion.nombre}</h3>
                 <p>{usuarioSesion.email}</p>
-                <span className="badge-role">Miembro</span>
+                <span className="badge-role">Miembro de Agenda</span>
               </div>
               
-              <div className="avatar-selector-container" style={{marginTop: '30px'}}>
-                <p style={{textAlign: 'center', width: '100%'}}>Cambiar foto de perfil:</p>
-                <div className="avatar-grid" style={{justifyContent: 'center', marginTop: '15px'}}>
+              <div className="avatar-selector-container" style={{ marginTop: '30px' }}>
+                <p style={{ textAlign: 'center', width: '100%' }}>Cambiar foto de perfil:</p>
+                <div className="avatar-grid" style={{ justifyContent: 'center', marginTop: '15px' }}>
                   {AVATARES.map((avatar, index) => (
                     <img 
                       key={index} 
@@ -221,18 +206,16 @@ export default function Dashboard({ onLogout }) {
               <h2>Temas del Espacio de Trabajo</h2>
               <p className="subtitle">Selecciona la paleta estructural de fondo para el panel:</p>
               <div className="material-themes-list">
-                <div className="theme-row-item color-l" onClick={() => setTemaGlobal('tema-light')}>
-                  <div className="color-preview preview-l"></div> <span>Gris Claro Muted</span>
-                </div>
-                <div className="theme-row-item color-d" onClick={() => setTemaGlobal('tema-dark')}>
-                  <div className="color-preview preview-d"></div> <span>Noche Oscura</span>
-                </div>
-                <div className="theme-row-item color-w" onClick={() => setTemaGlobal('tema-warm')}>
-                  <div className="color-preview preview-w"></div> <span>Arena Cálida</span>
-                </div>
-                <div className="theme-row-item color-t" onClick={() => setTemaGlobal('tema-tech')}>
-                  <div className="color-preview preview-t"></div> <span>Holograma Azul</span>
-                </div>
+                {[
+                  { id: 'tema-light', class: 'preview-l', name: 'Gris Claro Muted' },
+                  { id: 'tema-dark', class: 'preview-d', name: 'Noche Oscura' },
+                  { id: 'tema-warm', class: 'preview-w', name: 'Arena Cálida' },
+                  { id: 'tema-tech', class: 'preview-t', name: 'Holograma Azul' }
+                ].map(tema => (
+                  <div key={tema.id} className="theme-row-item" onClick={() => setTemaGlobal(tema.id)}>
+                    <div className={`color-preview ${tema.class}`}></div> <span>{tema.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -261,7 +244,7 @@ export default function Dashboard({ onLogout }) {
               <div className="detail-item">
                 <div>
                   <p className="detail-label">Notas y apuntes</p>
-                  <p className="detail-value notes-text">{contactoActivo.notas || "Sin descripción."}</p>
+                  <p className="detail-value notes-text">{contactoActivo.notes || "Sin descripción."}</p>
                 </div>
               </div>
             </div>
