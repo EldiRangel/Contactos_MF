@@ -4,7 +4,10 @@ import Dashboard from './components/Dashboard.jsx';
 import './App.css';
 
 export default function App() {
-  const [isLogged, setIsLogged] = useState(false);
+  // Comprueba si hay una sesión guardada para no obligar a loguearse de nuevo al recargar
+  const [isLogged, setIsLogged] = useState(() => {
+    return localStorage.getItem('sesion_activa') !== null;
+  });
 
   return (
     <>

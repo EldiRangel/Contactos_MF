@@ -1,21 +1,38 @@
 import { useState, useEffect } from 'react';
 
+const fotoPorDefecto = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+const AVATARES = [
+  fotoPorDefecto, 
+  "/img/avatar1.jpg", 
+  "/img/avatar2.jpg", 
+  "/img/avatar3.jpg", 
+  "/img/avatar4.jpg", 
+  "/img/avatar5.jpg", 
+  "/img/avatar6.webp", 
+  "/img/avatar7.jpg"
+];
+
 export default function ContactoForm({ addContacto, contactoEditar, actualizarContacto }) {
+  
   const [form, setForm] = useState({
-    nombre: '', apellido: '', numero: '', apodos: '', foto: '', version: '1', notas: ''
+    nombre: '', apellido: '', numero: '', apodos: '', foto: fotoPorDefecto, notas: ''
   });
 
-  // Carga los datos del contacto si se va a editar, o limpia el formulario si es uno nuevo
   useEffect(() => {
     if (contactoEditar) {
       setForm(contactoEditar);
     } else {
-      setForm({ nombre: '', apellido: '', numero: '', apodos: '', foto: '', version: '1', notas: '' });
+      setForm({ nombre: '', apellido: '', numero: '', apodos: '', foto: fotoPorDefecto, notas: '' });
     }
   }, [contactoEditar]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleFotoSelect = (imgUrl) => {
+    setForm({ ...form, foto: imgUrl });
   };
 
   const handleSubmit = (e) => {
@@ -42,20 +59,27 @@ export default function ContactoForm({ addContacto, contactoEditar, actualizarCo
           <input name="apodos" value={form.apodos} onChange={handleChange} placeholder="Apodo (Opcional)" />
         </div>
 
-        <input name="foto" value={form.foto} onChange={handleChange} placeholder="URL de la Foto (Opcional)" />
+        <div className="avatar-selector-container">
+          <p>Selecciona un avatar predeterminado:</p>
+          <div className="avatar-grid">
+            {AVATARES.map((avatar, index) => (
+              <img 
+                key={index} 
+                src={avatar} 
+                alt={`Avatar ${index}`}
+                className={`avatar-option ${form.foto === avatar ? 'selected' : ''}`}
+                onClick={() => handleFotoSelect(avatar)}
+              />
+            ))}
+          </div>
+        </div>
         
-        <select name="version" value={form.version} onChange={handleChange}>
-          <option value="1">Selecciona un Diseño... (Versión 1)</option>
-          <option value="2">Versión 2</option>
-          <option value="3">Versión 3</option>
-          <option value="4">Versión 4</option>
-        </select>
         
         
         <textarea name="notas" value={form.notas} onChange={handleChange} placeholder="Notas sobre el contacto..."></textarea>
         
         <button type="submit" className="btn-submit-form">
-          {contactoEditar ? 'Guardar Cambios' : 'Guardar Contacto'}
+          {contactoEditar ? 'Guardar Cambios' : 'Guardar en Contactos'}
         </button>
       </form>
     </div>
