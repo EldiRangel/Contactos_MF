@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 
 export default function Login({ onLoginSuccess }) {
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(false); //cambio de vistas
 
-  // Inicializar usuario administrador por defecto si localStorage está vacío
+  
   useEffect(() => {
     const usuariosExistentes = localStorage.getItem('usuarios');
     if (!usuariosExistentes) {
@@ -88,7 +88,7 @@ export default function Login({ onLoginSuccess }) {
         
         <div className="form-container sign-in">
           <form onSubmit={handleLoginSubmit}>
-            <h1>Iniciar Sesión</h1>
+            <h1>Iniciar Sesion</h1>
             <span>ingresa tus credenciales de acceso</span>
             <input type="email" name="email" placeholder="Email (admin@correo.com)" required />
             <input type="password" name="password" placeholder="Password (1234)" required />

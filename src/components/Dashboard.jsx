@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from './Navbar.jsx';
 import ContactoForm from './ContactoForm.jsx';
 import Contactos from './Contactos.jsx';
-
+// URL de la foto por defecto para contactos y usuarios sin imagen personalizada
 const fotoPorDefecto = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 const AVATARES = [
   fotoPorDefecto, 
@@ -18,7 +18,7 @@ const AVATARES = [
 export default function Dashboard({ onLogout }) {
   // Obtener la información del usuario en sesión o asignar valores anónimos por defecto
   const usuarioSesion = JSON.parse(localStorage.getItem('sesion_activa')) || {
-    nombre: 'Usuario',
+    nombre: 'Usuario Demo',
     email: 'anonimo@correo.com',
     foto: fotoPorDefecto
   };
@@ -96,7 +96,7 @@ export default function Dashboard({ onLogout }) {
         vistaCartas={vistaCartas}
         setVistaCartas={setVistaCartas}
       />
-
+// barra lateral
       <div className="google-main-body">
         
         <aside className={`google-sidebar ${sidebarOpen ? 'sidebar-visible' : 'sidebar-hidden'}`}>
@@ -105,7 +105,7 @@ export default function Dashboard({ onLogout }) {
               className={`sidebar-tab ${vistaActiva === 'ver' ? 'tab-active' : ''}`}
               onClick={() => setVistaActiva('ver')}
             >
-              👤 <span className="tab-text">Contactos ({listaContactos.length})</span>
+               <span className="tab-text">Contactos ({listaContactos.length})</span>
             </button>
 
             <button 
@@ -132,7 +132,7 @@ export default function Dashboard({ onLogout }) {
 
           <div className="sidebar-footer">
             <button className="sidebar-tab btn-logout-tab" onClick={handleCerrarSesion}>
-               <span className="tab-text">Cerrar Sesión</span>
+               <span className="tab-text">Cerrar Sesion</span>
             </button>
           </div>
         </aside>
@@ -176,14 +176,15 @@ export default function Dashboard({ onLogout }) {
 
           {vistaActiva === 'perfil' && (
             <div className="google-center-form-box material-profile-panel">
-              <h2>Perfil de Usuario</h2>
+              <h2>Mi Perfil</h2>
               <div className="profile-card-body">
                 <img src={fotoUsuario} alt="User" style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />
                 <h3>{usuarioSesion.nombre}</h3>
                 <p>{usuarioSesion.email}</p>
-                <span className="badge-role">Miembro de Agenda</span>
+                <span className="badge-role">Miembro</span>
               </div>
-              
+
+              //foto de perfil
               <div className="avatar-selector-container" style={{ marginTop: '30px' }}>
                 <p style={{ textAlign: 'center', width: '100%' }}>Cambiar foto de perfil:</p>
                 <div className="avatar-grid" style={{ justifyContent: 'center', marginTop: '15px' }}>
@@ -200,17 +201,17 @@ export default function Dashboard({ onLogout }) {
               </div>
             </div>
           )}
-
+             //temas
           {vistaActiva === 'temas' && (
             <div className="google-center-form-box">
-              <h2>Temas del Espacio de Trabajo</h2>
+              <h2>Temas</h2>
               <p className="subtitle">Selecciona la paleta estructural de fondo para el panel:</p>
               <div className="material-themes-list">
                 {[
-                  { id: 'tema-light', class: 'preview-l', name: 'Gris Claro Muted' },
-                  { id: 'tema-dark', class: 'preview-d', name: 'Noche Oscura' },
-                  { id: 'tema-warm', class: 'preview-w', name: 'Arena Cálida' },
-                  { id: 'tema-tech', class: 'preview-t', name: 'Holograma Azul' }
+                  { id: 'tema-light', class: 'preview-l', name: 'Gris Claro ' },
+                  { id: 'tema-dark', class: 'preview-d', name: 'Noche ' },
+                  { id: 'tema-warm', class: 'preview-w', name: ' Cálido' },
+                  { id: 'tema-tech', class: 'preview-t', name: 'Azul' }
                 ].map(tema => (
                   <div key={tema.id} className="theme-row-item" onClick={() => setTemaGlobal(tema.id)}>
                     <div className={`color-preview ${tema.class}`}></div> <span>{tema.name}</span>
@@ -221,7 +222,7 @@ export default function Dashboard({ onLogout }) {
           )}
         </main>
       </div>
-
+// Si hay un contacto activo seleccionado para ver detalles, se muestra un modal con la información completa del contacto. El modal se cierra al hacer clic fuera del contenido o en el botón de cerrar.
       {contactoActivo && (
         <div className="modal-overlay" onClick={() => setContactoActivo(null)}>
           <div className="modal-content material-modal" onClick={(e) => e.stopPropagation()}>
@@ -237,14 +238,14 @@ export default function Dashboard({ onLogout }) {
             <div className="modal-body-details">
               <div className="detail-item">
                 <div>
-                  <p className="detail-label">Teléfono móvil</p>
+                  <p className="detail-label">Telefono movil</p>
                   <p className="detail-value">{contactoActivo.numero}</p>
                 </div>
               </div>
               <div className="detail-item">
                 <div>
                   <p className="detail-label">Notas y apuntes</p>
-                  <p className="detail-value notes-text">{contactoActivo.notes || "Sin descripción."}</p>
+                  <p className="detail-value notes-text">{contactoActivo.notes || "Sin descripcion."}</p>
                 </div>
               </div>
             </div>

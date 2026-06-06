@@ -1,8 +1,9 @@
+// Componente que representa una tarjeta de contacto, recibe el contacto a mostrar, funciones para eliminar, ver y editar el contacto, y la vista actual para renderizar diferentes estilos de tarjeta
 export default function ContactCard({ contacto, onDelete, onView, onEdit, vistaCartas }) {
   const { id, nombre, apellido, numero, foto, notas, apodos } = contacto; 
   const fotoPorDefecto = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
   const avatar = foto || fotoPorDefecto;
-
+// Dependiendo del valor de vistaCartas, se renderiza un estilo diferente de tarjeta para el contacto. Cada tarjeta muestra la información básica del contacto (nombre, número, etc.) y tiene botones para editar o eliminar el contacto, que llaman a las funciones onEdit y onDelete respectivamente. Al hacer clic en la tarjeta (excepto en los botones), se llama a la función onView para mostrar los detalles del contacto.
   if (vistaCartas === '1') {
     return (
       <div className="google-contact-row" onClick={() => onView(contacto)}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 const fotoPorDefecto = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-
+// Lista de avatares predeterminados para seleccionar al crear o editar un contacto
 const AVATARES = [
   fotoPorDefecto, 
   "/img/avatar1.jpg", 
@@ -12,13 +12,13 @@ const AVATARES = [
   "/img/avatar6.webp", 
   "/img/avatar7.jpg"
 ];
-
+// Componente de formulario para crear o editar un contacto, recibe funciones para agregar o actualizar contactos y el contacto a editar (si aplica)
 export default function ContactoForm({ addContacto, contactoEditar, actualizarContacto }) {
   
   const [form, setForm] = useState({
     nombre: '', apellido: '', numero: '', apodos: '', foto: fotoPorDefecto, notas: ''
   });
-
+  
   useEffect(() => {
     if (contactoEditar) {
       setForm(contactoEditar);
